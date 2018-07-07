@@ -6,9 +6,9 @@ import numpy as np
 
 from pprint import pprint
 
-from Utilities.evaluate_pressure_tap_data_ref_in_time import TimeHistoryData, PressureCoefficientData
+from utilities.evaluate_pressure_tap_data_ref_in_time import TimeHistoryData, PressureCoefficientData
 
-with open(os_path.normpath('InputData/ResultsOverview.json')) as f:
+with open(os_path.normpath('input_data/ResultsOverview.json')) as f:
     results = json.load(f)['results']
 
 nr_of_blocks = 6
@@ -18,7 +18,7 @@ density = 1.2
 for result in results:
 
     # load reference data results
-    ref_point_file = os_path.join("InputData", os_path.normpath(result['reference_points'][0]['file_name']))
+    ref_point_file = os_path.join("input_data", os_path.normpath(result['reference_points'][0]['file_name']))
 
     with open(ref_point_file, 'r') as f:
         #jump to the beginning of the file
