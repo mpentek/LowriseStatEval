@@ -2,6 +2,8 @@
     "results": [
         {
             "case": "Kratos",
+            "density" : 1.2,
+            "ramp_up_time" : 30,
             "pressure_taps": [
                 {"file_name" : "Kratos/pressure_taps/pressure_at_0.dat"},
                 {"file_name" : "Kratos/pressure_taps/pressure_at_1.dat"},
@@ -29,6 +31,8 @@
         },
         {
             "case": "FeFlo",
+            "density" : 1.2,
+            "ramp_up_time" : 30,
             "pressure_taps": [
                 {"file_name" : "FeFlo/s0000000001"},
                 {"file_name" : "FeFlo/s0000000002"},

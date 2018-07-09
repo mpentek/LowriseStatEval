@@ -1,0 +1,17 @@
+{
+    "results": [
+        {
+            "case": "Kratos",
+            "density" : 1.2,
+            "ramp_up_time" : 30,
+            "pressure_taps": [
+                {"file_name" : "Kratos/pressure_taps/pressure_at_0.dat"},
+                {"file_name" : "Kratos/pressure_taps/pressure_at_1.dat"}],
+            "reference_points": [
+                {
+                    "label" : "-120",
+                    "file_name": "Kratos/reference_points/pressure_and_velocity_x_at_0.dat"
+                }]
+        }
+    ]
+}

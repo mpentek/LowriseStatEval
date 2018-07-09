@@ -1,49 +1,118 @@
+# -*- coding: utf-8 -*-
+"""
+Module contains the main evaluation of pressure tap results
+
+The variable 'results' will be initially populated with the raw results
+This dictionary will be enhanced with the statistic evaluation
+Check the proposed structure of the dictionary in the read.me
+
+Created on 08.07.2018
+
+@author: mate.pentek@tum.de, anoop.kodakkal@tum.de
+"""
+
 import json
+import sys
 from os import path as os_path
 
 import re
 import numpy as np
+from matplotlib.backends.backend_pdf import PdfPages
 
 from pprint import pprint
 
-from utilities.evaluate_pressure_tap_data_ref_in_time import TimeHistoryData, PressureCoefficientData
+# import own modules from utilities
+from utilities.file_utilities import initialize_point_data
+from utilities.other_utilities import get_ramp_up_index, get_cp_series
+from utilities.statistic_utilities import get_general_statistics, get_extreme_values_statistics
+from utilities.plot_utilities import plot_ref_point_pressure_results, plot_pressure_tap_cp_results, plot_pressure_taps_general_statistics, plot_pressure_taps_extreme_values
 
-with open(os_path.normpath('input_data/ResultsOverview.json')) as f:
+try:
+    # test if system argument is passed for testing
+    is_test = bool(sys.argv[1])
+except:
+    # use default testing setting
+    # all files will be evaluated
+    is_test = False
+
+if is_test:
+    results_overview = 'ResultsOverviewTest.json'
+    report_case_ending = 'Test.pdf'
+else:
+    results_overview = 'ResultsOverview.json'
+    report_case_ending = '.pdf'
+
+# variables which need to be additionally specified
+# for the block maxima
+nr_of_blocks = 6
+# in csae needed, but warning because it increases evaluation time reasonably
+calculate_mode = True
+if calculate_mode:
+    print("## Mode calculation on, might take longer")
+# subfolders where the input data is and where reports should be generated
+input_data_folder = 'input_data'
+reports_folder = 'reports'
+
+# load results parameters
+with open(os_path.join(input_data_folder, results_overview)) as f:
     results = json.load(f)['results']
 
-nr_of_blocks = 6
-ramp_up_time = 30
-density = 1.2
-
 for result in results:
+    with PdfPages(os_path.join(reports_folder, 'LowriseReport_' + result['case'] + report_case_ending)) as report_pdf:
 
-    # load reference data results
-    ref_point_file = os_path.join("input_data", os_path.normpath(result['reference_points'][0]['file_name']))
+        # load reference data results, update existing dictionary
+        # NOTE: for now only one reference point, later more could be added
+        ref_point_file = os_path.join(input_data_folder, os_path.normpath(result['reference_points'][0]['file_name']))
+        result['reference_points'][0].update(initialize_point_data(ref_point_file, result['case']))
+        # NOTE: assuming that reference point data and tap data have the same time step
+        # which should be the case as we are taking both from the same simulation
+        result['reference_points'][0]['post_ramp_up_index'] = get_ramp_up_index(result['reference_points'][0]['series']['time'], result['ramp_up_time'])
 
-    with open(ref_point_file, 'r') as f:
-        #jump to the beginning of the file
-        f.seek(0)
-        first_line = f.readline()
+        # evaluating statistical quantities
+        result['reference_points'][0]['statistics'] = {}
+        result['reference_points'][0]['statistics']['pressure'] = {}
+        result['reference_points'][0]['statistics']['pressure']['general'] = get_general_statistics(result['reference_points'][0]['series']['pressure'], calculate_mode)
 
-    ref_data = {}
-    if 'Kratos' in result['case']:
-        ref_data['position'] = [float(item) for item in (re.findall(r"[-+]?\d*\.\d+|\d+",first_line))]
-    elif 'FeFlo' in result['case']:
-        ref_data['position'] = [float(item) for item in first_line.rstrip('\n').split('  ')[-3:]]
-    ref_data["time"] = np.loadtxt(ref_point_file, usecols = (0,))
-    ref_data["pressure"] = np.loadtxt(ref_point_file, usecols = (1,))
-    ref_data["velocity_x"] =  np.loadtxt(ref_point_file, usecols = (2,))
+        # plotting reference point data
+        plot_ref_point_pressure_results(result['reference_points'][0], report_pdf)
 
-    for pressure_tap in result['pressure_taps']:
-        pressure_tap_file = os_path.join("InputData", os_path.normpath(pressure_tap['file_name']))
+        tap_counter = 0
+        for pressure_tap in result['pressure_taps']:
 
-        pressure_data = TimeHistoryData(pressure_tap_file, ramp_up_time)
+            tap_counter += 1
+            pressure_tap['label'] = str(tap_counter)
+            # load tap data results, update existing dictionary
+            pressure_tap_file = os_path.join(input_data_folder, os_path.normpath(pressure_tap['file_name']))
+            pressure_tap.update(initialize_point_data(pressure_tap_file, result['case']))
+            pressure_tap['post_ramp_up_index'] = get_ramp_up_index(pressure_tap['series']['time'], result['ramp_up_time'])
 
-        cp_data = PressureCoefficientData(pressure_data.position,
-                                        pressure_data.variable_results_raw,
-                                        ref_data,
-                                        ramp_up_time,
-                                        density)
+            pressure_tap['series']['cp'] = get_cp_series(pressure_tap['series']['pressure'],
+                                                        result['reference_points'][0]['series'],
+                                                        result['density'])
 
-        pprint(cp_data.statistic_results)
-        break
+            # evaluating statistical quantities (only after ramp-up time)
+            # NOTE: assumes that reference point and pressure tap have the same time series
+            # as well as time step size
+            pressure_tap['statistics'] = {}
+            pressure_tap['statistics']['cp'] = {}
+            pressure_tap['statistics']['cp']['general'] = get_general_statistics(pressure_tap['series']['cp'][result['reference_points'][0]['post_ramp_up_index']:],
+                                                calculate_mode)
+            pressure_tap['statistics']['cp']['extreme_value'] = get_extreme_values_statistics(pressure_tap['series']['cp'][pressure_tap['post_ramp_up_index']:],
+                                                pressure_tap['post_ramp_up_index'],
+                                                nr_of_blocks,
+                                                calculate_mode)
+
+            # plotting tap data
+            plot_pressure_tap_cp_results(pressure_tap, calculate_mode, report_pdf)
+
+            print('## Plot for result case ' + result['case'] + ' and tap label ' + pressure_tap['label'] + ' ready')
+
+        # general statistics for all taps
+        plot_pressure_taps_general_statistics(result['pressure_taps'], report_pdf)
+
+        # extreme value statistics for all taps
+        plot_pressure_taps_extreme_values(result['pressure_taps'], calculate_mode, report_pdf)
+
+        print('## All plots for result case ' + result['case'] + ' finished')
+        # "clearing" dictionary value to reduce memory consumption
+        result = {}

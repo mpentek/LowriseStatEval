@@ -1,0 +1,88 @@
+
+results = {
+    [
+        {
+            "case": ...,
+            "density" : ...,
+            "ramp_up_time" : ...,
+            "pressure_taps":
+            [
+                {
+                    "label" : ...,
+                    "file_name" : ..,
+                    "series" :
+                        {
+                            "time"      : [...],
+                            "pressure"  : [...],
+                            "cp"        : [...],
+                        },
+                    "statistics":
+                        {
+                            "cp" :
+                                {
+                                    "general" :
+                                        {
+                                        "mean" : ...,
+                                        "std"  : ...,
+                                        "skewness" : ...,
+                                        "kurtosis" : ...,
+                                        "min"   : ...,
+                                        "max"   : ...,
+                                        "mode"  : ....,
+                                        "pdf" :
+                                            {
+                                                "x" : [...],
+                                                "y" : [...]
+                                            }
+                                },
+                                "extreme_values":
+                                {
+                                    "block_start_idx" : ...,
+                                    "classical" :
+                                        {
+                                            "idx" : [...],
+                                            "val" : [...],
+                                            "statistics" :
+                                                {
+                                                    "mean" : ...,
+                                                    "std"  : ...,
+                                                    "skewness" : ...,
+                                                    "kurtosis" : ...,
+                                                    "min"   : ...,
+                                                    "max"   : ...,
+                                                    "mode"  : ....,
+                                                    "pdf" :
+                                                        {
+                                                            "x" : [...],
+                                                            "y" : [...]
+                                                        }
+                                                }
+                                        }
+                                    "alternative" :
+                                        {
+                                            "idx" : [...],
+                                            "val" : [...],
+                                            "statistics" :
+                                                {
+                                                    "mean" : ...,
+                                                    "std"  : ...,
+                                                    "skewness" : ...,
+                                                    "kurtosis" : ...,
+                                                    "min"   : ...,
+                                                    "max"   : ...,
+                                                    "mode"  : ....,
+                                                    "pdf" :
+                                                        {
+                                                            "x" : [...],
+                                                            "y" : [...]
+                                                        }
+                                                }
+                                        }
+                                }
+                        }, ...
+                }, ...
+
+            ]
+        }, ...
+    ]
+}
