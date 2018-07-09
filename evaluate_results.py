@@ -15,38 +15,21 @@ import json
 import sys
 from os import path as os_path
 
-from argparse import ArgumentParser, ArgumentTypeError
 import numpy as np
 from matplotlib.backends.backend_pdf import PdfPages
 
 from utilities.file_utilities import initialize_point_data
-from utilities.other_utilities import get_ramp_up_index, get_cp_series
+from utilities.other_utilities import get_custom_parser_settings, get_ramp_up_index, get_cp_series
 from utilities.statistic_utilities import get_general_statistics, get_extreme_values_statistics
 from utilities.plot_utilities import plot_ref_point_pressure_results, plot_pressure_tap_cp_results, plot_pressure_taps_general_statistics, plot_pressure_taps_extreme_values
 
 
 #----------------------------------------------------------------
-# system arguments which can be passed and default values
-parser = ArgumentParser()
+# parsing of command line arguments for user specified settings
+# or default ones
 
-def str2bool(v):
-    if v.lower() in ('yes', 'true', 't', 'y', '1'):
-        return True
-    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
-        return False
-    else:
-        raise ArgumentTypeError('Boolean value expected.')
-
-# add more options if you like
-parser.add_argument('-tv','--run_test', dest='run_test', type=str2bool, default=True,
-                    help='bool: is_test to evaluate on very few files for testing, will speed up computation if True')
-parser.add_argument('-cm','--calculate_mode', dest='calculate_mode', type=str2bool, default=False,
-                    help='bool: calculate_mode when calling statistics, will slow down computation if True')
-parser.add_argument('-nb','--nr_of_blocks', dest='nr_of_blocks', type=int, default=6,
-                    help='int: number of blocks for Block-axima')
-
-args = parser.parse_args()
-print("## Considered arguments: ", args)
+args = get_custom_parser_settings().parse_args()
+print("## Considered command-line arguments: ", args)
 
 if args.calculate_mode:
     print("## Mode calculation on, will take longer")

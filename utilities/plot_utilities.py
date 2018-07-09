@@ -112,7 +112,7 @@ def plot_pressure_tap_cp_results(pressure_tap, calculate_mode, report_pdf):
 
     ax1.set_title('Time history')
     ax1.set_xlabel('Time [s]')
-    ax1.set_ylabel('Pressure coefficient [-]')
+    ax1.set_ylabel(r'$C_{p}$  [-]')
 
     ax1.legend()
     ax1.grid(True)
@@ -143,7 +143,7 @@ def plot_pressure_tap_cp_results(pressure_tap, calculate_mode, report_pdf):
     ax2.text(0.1,0.9, text_msg, transform = ax2.transAxes)
 
     ax2.set_title('PDF of time history')
-    ax2.set_xlabel('Pressure coefficient [-]')
+    ax2.set_xlabel(r'$C_{p}$  [-]')
     ax2.set_ylabel('Probability density')
     ax2.grid(True)
 
@@ -172,7 +172,7 @@ def plot_pressure_tap_cp_results(pressure_tap, calculate_mode, report_pdf):
     ax3.text(0.1,0.9, text_msg, transform = ax3.transAxes)
 
     ax3.set_title('PDF of Classical Extrema')
-    ax3.set_xlabel('Pressure coefficient [-]')
+    ax3.set_xlabel(r'$C_{p}$  [-]')
     ax3.grid(True)
 
     # subplot 4
@@ -205,7 +205,7 @@ def plot_pressure_tap_cp_results(pressure_tap, calculate_mode, report_pdf):
         print("## pressure_tap['statistics']['cp']['extreme_value']['alternative'] list empty for tap " + pressure_tap['label'])
 
     ax4.set_title('PDF of Alternative Extrema')
-    ax4.set_xlabel('Pressure coefficient [-]')
+    ax4.set_xlabel(r'$C_{p}$  [-]')
     ax4.grid(True)
     ax4.legend(bbox_to_anchor=(0.9, 0.9),bbox_transform=ax4.transAxes)
 
@@ -225,7 +225,7 @@ def plot_ref_point_pressure_results(ref_point, report_pdf):
 
     # main figure
     fig = plt.figure()
-    fig.suptitle('Results for tap "' + ref_point['label'] + '" at: ' + ', '.join(map(str, ref_point['position'])))
+    fig.suptitle('Results for reference tap "' + ref_point['label'] + '" at: ' + ', '.join(map(str, ref_point['position'])))
     gs = gridspec.GridSpec(1, 1)
 
     # subplot 1
@@ -253,7 +253,7 @@ def plot_ref_point_pressure_results(ref_point, report_pdf):
         label = 'mean-std')
 
     ax1.text(0.95,0.5,
-        'Mean %.3f\n Mean+std%.3f\n Mean-std %.3f' % (ref_point['statistics']['pressure']['general']['mean'],
+        'Mean %.3f\n Mean+std %.3f\n Mean-std %.3f' % (ref_point['statistics']['pressure']['general']['mean'],
         ref_point['statistics']['pressure']['general']['mean'] + ref_point['statistics']['pressure']['general']['std'],
         ref_point['statistics']['pressure']['general']['mean'] - ref_point['statistics']['pressure']['general']['std']),
         transform = ax1.transAxes)
@@ -313,7 +313,7 @@ def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
     ax1 = fig.add_subplot(gs[0,0])
     ax1.bar(np.arange(nr_of_bars), mean, barwidth, color='r')
     ax1.set_title('Mean')
-    ax1.set_ylabel('Pressure coefficient [-]')
+    ax1.set_ylabel(r'$C_{p}$  [-]')
     ax1.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
     ax1.grid(True)
 
@@ -321,7 +321,7 @@ def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
     ax2 = fig.add_subplot(gs[1,0])
     ax2.bar(np.arange(nr_of_bars), std, barwidth, color='g')
     ax2.set_title('Std')
-    ax2.set_ylabel('Pressure coefficient [-]')
+    ax2.set_ylabel(r'$C_{p}$  [-]')
     ax2.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
     ax2.grid(True)
 
@@ -329,7 +329,7 @@ def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
     ax3 = fig.add_subplot(gs[2,0])
     ax3.bar(np.arange(nr_of_bars), kurt, barwidth, color='b')
     ax3.set_title('Kurtosis')
-    ax3.set_ylabel('Pressure coefficient [-]')
+    ax3.set_ylabel('[-]')
     ax3.set_xlabel('Tap label')
     ax3.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
     ax3.grid(True)
@@ -356,23 +356,23 @@ def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
     ax1 = fig.add_subplot(gs[0,0])
     ax1.bar(np.arange(nr_of_bars), skew, barwidth, color='r')
     ax1.set_title('Skewness')
-    ax1.set_ylabel('Pressure coefficient [-]')
+    ax1.set_ylabel('[-]')
     ax1.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
     ax1.grid(True)
 
     # subplot 2
     ax2 = fig.add_subplot(gs[1,0])
     ax2.bar(np.arange(nr_of_bars), min_val, barwidth, color='g')
-    ax2.set_title('Min')
-    ax2.set_ylabel('Pressure coefficient [-]')
+    ax2.set_title('Min (global)')
+    ax2.set_ylabel(r'$C_{p}$  [-]')
     ax2.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
     ax2.grid(True)
 
     # subplot 3
     ax3 = fig.add_subplot(gs[2,0])
     ax3.bar(np.arange(nr_of_bars), max_val, barwidth, color='b')
-    ax3.set_title('Max')
-    ax3.set_ylabel('Pressure coefficient [-]')
+    ax3.set_title('Max (global)')
+    ax3.set_ylabel(r'$C_{p}$  [-]')
     ax3.set_xlabel('Tap label')
     ax3.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
     ax3.grid(True)
@@ -429,7 +429,7 @@ def plot_pressure_taps_extreme_values(pressure_taps, calculate_mode, report_pdf)
         ax1.bar(np.arange(nr_of_bars), mean_CEV, barwidth, color='r', label = 'Mean')
 
     ax1.set_title('Classical Extrema')
-    ax1.set_ylabel('Pressure coefficient [-]')
+    ax1.set_ylabel(r'$C_{p}$  [-]')
     ax1.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
     ax1.grid(True)
 
@@ -444,7 +444,7 @@ def plot_pressure_taps_extreme_values(pressure_taps, calculate_mode, report_pdf)
         ax2.bar(np.arange(nr_of_bars), mean_AEV, barwidth, color='r', label = 'Mean')
 
     ax2.set_title('Alternative Extrema')
-    ax2.set_ylabel('Pressure coefficient [-]')
+    ax2.set_ylabel(r'$C_{p}$  [-]')
     ax2.set_xlabel('Tap Label')
     ax2.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
     ax2.grid(True)

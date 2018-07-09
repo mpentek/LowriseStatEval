@@ -169,6 +169,9 @@ def get_block_maxima(data_series, ramp_up_idx,  nr_of_blocks, calculate_mode):
 
     else:
         print("## No alternative extremes found, using 0.0 as dummy statistic values not to break plotting")
+        alternative_extremes_val.append(0.0)
+        alternative_extremes_idx.append(0)
+
         alternative_extremes_stat = {}
         alternative_extremes_stat['mean'] = 0.0
         alternative_extremes_stat['std'] = 0.0
