@@ -19,8 +19,6 @@ import re
 import numpy as np
 from matplotlib.backends.backend_pdf import PdfPages
 
-from pprint import pprint
-
 # import own modules from utilities
 from utilities.file_utilities import initialize_point_data
 from utilities.other_utilities import get_ramp_up_index, get_cp_series
