@@ -9,9 +9,9 @@ Created on 08.07.2018
 
 
 import matplotlib.mlab as mlab
-import numpy as np #import max,min,std,mean,abs,floor,fft
-from scipy.stats import gaussian_kde, tmean, tstd, skew, kurtosis, mode
-from scipy.stats.mstats import mode as new_mode
+import numpy as np
+from scipy.stats import gaussian_kde, tmean, tstd, skew, kurtosis #, mode
+# from scipy.stats.mstats import mode
 
 
 def get_pdf_kde(data_series):
@@ -89,32 +89,36 @@ def get_general_statistics(data_series, calculate_mode):
 
     # NOTE: mode is time-consuming
     if calculate_mode:
+        ## version 1
         # scipy.stats.mode seems to have a problem and deliver bad results
-        #results['mode'] = mode(data_series)[0][0]
+        #r esults['mode'] = mode(data_series)[0][0]
 
+        ## version 2
         # alternative would be scipy.stats.mstat.mode as new_mode
-        # which seems to deliver correct results
+        # which seems to deliver more correct results than versiom 1
         # and be the most robust
-        results['mode'] = new_mode(data_series)[0][0]
+        # it also seems to be a lot faster than version 1
+        # results['mode'] = mode(data_series)[0][0]
 
-        # Note: as PDF is anyway calculated, taking mode from there as the max value in the PDF
-        # '''
-        # Assuming unimodal functions:
-        # A mode of a continuous probability distribution is a value at which the
-        # probability density function (pdf) attains its maximum value
-        # '''
-        # results['mode'] = results['pdf']['x'][np.argmax(results['pdf']['y'])]
+        ## version 3
+        # note: as PDF is anyway calculated, taking mode from there as the max value in the PDF
+        '''
+        Assuming unimodal functions:
+        A mode of a continuous probability distribution is a value at which the
+        probability density function (pdf) attains its maximum value
+        '''
+        results['mode'] = results['pdf']['x'][np.argmax(results['pdf']['y'])]
 
     return results
 
 def get_extreme_values_statistics(data_series, ramp_up_idx, block_size, calculate_mode, case='BM'):
 
     if case == 'BM':
-        print('Evaluating BM - Block-Maxima')
+        print('## Evaluating BM - Block-Maxima')
         return get_block_maxima(data_series, ramp_up_idx, block_size, calculate_mode)
 
     elif case == 'POT':
-        print('Evaluating POT - Peak-Over-Threshol')
+        print('## Evaluating POT - Peak-Over-Threshol')
         raise Exception("POT not implemented, choose BM")
 
     else:

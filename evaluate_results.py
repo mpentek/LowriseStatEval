@@ -30,14 +30,15 @@ from utilities.plot_utilities import plot_ref_point_pressure_results, plot_press
 parser = ArgumentParser()
 
 # add more options if you like
-parser.add_argument("--nr_of_blocks", dest="nr_of_blocks", type=int, default=6,
-                    help="int: number of blocks for Block-axima")
-parser.add_argument("--calculate_mode", dest="calculate_mode", type=bool, default=False,
-                    help="bool: calculate_mode when calling statistics, will slow down computation if True")
-parser.add_argument("--is_test", dest="is_test", type=bool, default=True,
-                    help="bool: is_test to evaluate on very few files for testing, will speed up computation if True")
+parser.add_argument('-it','--is_test', dest='is_test', type=bool,
+                    help='bool: is_test to evaluate on very few files for testing, will speed up computation if True')
+parser.add_argument('-cm','--calculate_mode', dest='calculate_mode', type=bool, default=False,
+                    help='bool: calculate_mode when calling statistics, will slow down computation if True')
+parser.add_argument('-nb','--nr_of_blocks', dest='nr_of_blocks', type=int, default=6,
+                    help='int: number of blocks for Block-axima')
 
 args = parser.parse_args()
+print(args)
 
 if args.calculate_mode:
     print("## Mode calculation on, will take longer")
