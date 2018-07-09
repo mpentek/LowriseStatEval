@@ -15,7 +15,7 @@ import json
 import sys
 from os import path as os_path
 
-from argparse import ArgumentParser
+from argparse import ArgumentParser, ArgumentTypeError
 import numpy as np
 from matplotlib.backends.backend_pdf import PdfPages
 
@@ -29,21 +29,29 @@ from utilities.plot_utilities import plot_ref_point_pressure_results, plot_press
 # system arguments which can be passed and default values
 parser = ArgumentParser()
 
+def str2bool(v):
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise ArgumentTypeError('Boolean value expected.')
+
 # add more options if you like
-parser.add_argument('-it','--is_test', dest='is_test', type=bool,
+parser.add_argument('-tv','--run_test', dest='run_test', type=str2bool, default=True,
                     help='bool: is_test to evaluate on very few files for testing, will speed up computation if True')
-parser.add_argument('-cm','--calculate_mode', dest='calculate_mode', type=bool, default=False,
+parser.add_argument('-cm','--calculate_mode', dest='calculate_mode', type=str2bool, default=False,
                     help='bool: calculate_mode when calling statistics, will slow down computation if True')
 parser.add_argument('-nb','--nr_of_blocks', dest='nr_of_blocks', type=int, default=6,
                     help='int: number of blocks for Block-axima')
 
 args = parser.parse_args()
-print(args)
+print("## Considered arguments: ", args)
 
 if args.calculate_mode:
     print("## Mode calculation on, will take longer")
 
-if args.is_test:
+if args.run_test:
     results_overview = 'ResultsOverviewTest.json'
     report_case_ending = 'Test.pdf'
     print("## In testing mode, will take less time")
