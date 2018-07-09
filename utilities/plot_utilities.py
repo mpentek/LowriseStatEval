@@ -12,6 +12,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import matplotlib.gridspec as gridspec
 
+
 # print to check all available predefined plot styles
 #print(plt.style.available)
 # for example choose the popular ggplot
@@ -35,34 +36,34 @@ plt.rcParams['text.latex.preamble'] = [r"\usepackage{lmodern}"]
 # options
 # for customizing check https://matplotlib.org/users/customizing.html
 params = {'text.usetex': True,
-          'font.size': 8,
+          'font.size': 10,
           'font.family': 'lmodern',
           'text.latex.unicode': True,
-          'figure.titlesize': 12,
+          'figure.titlesize': 14,
           'figure.titleweight': 'bold',
           'figure.figsize': (width, height),
           'figure.dpi': 300,
           'figure.constrained_layout.use' : True,
           'figure.subplot.wspace'  : 0.25,
           'figure.subplot.hspace'  : 0.25,
-          'axes.titlesize': 10,
-          'axes.titlepad' : 10,
-          'axes.labelsize': 8,
-          'axes.labelpad': 8,
+          'axes.titlesize': 12,
+          'axes.titlepad' : 12,
+          'axes.labelsize': 10,
+          'axes.labelpad': 10,
           'axes.grid': 'True',
           'axes.grid.which': 'both',
           'axes.xmargin': 0.05,
           'axes.ymargin': 0.05,
-          'lines.linewidth': 0.5,
-          'lines.markersize': 2,
-          'xtick.labelsize': 8,
-          'ytick.labelsize': 8,
+          'lines.linewidth': 1.0,
+          'lines.markersize': 5,
+          'xtick.labelsize': 10,
+          'ytick.labelsize': 10,
           'ytick.minor.visible': False,
           'xtick.minor.visible': False,
           'grid.linestyle': '-',
           'grid.linewidth': 0.5,
           'grid.alpha': 0.3,
-          'legend.fontsize': 8,
+          'legend.fontsize': 10,
           'savefig.dpi': 300,
           'savefig.format': 'pdf',
           'savefig.bbox': 'tight'
@@ -98,11 +99,13 @@ def plot_pressure_tap_cp_results(pressure_tap, calculate_mode, report_pdf):
     ax1.scatter(pressure_tap['series']['time'][pressure_tap['statistics']['cp']['extreme_value']['classical']['idx']],
             pressure_tap['series']['cp'][pressure_tap['statistics']['cp']['extreme_value']['classical']['idx']],
             marker ='s',
+            c='r',
             label = 'Clas. Extr.')
 
     ax1.scatter(pressure_tap['series']['time'][pressure_tap['statistics']['cp']['extreme_value']['alternative']['idx']],
             pressure_tap['series']['cp'][pressure_tap['statistics']['cp']['extreme_value']['alternative']['idx']],
             marker = 'D',
+            c='g',
             label = 'Alter. Extr.')
 
     for idx in pressure_tap['statistics']['cp']['extreme_value']['block_start_idx']:
@@ -198,8 +201,9 @@ def plot_pressure_tap_cp_results(pressure_tap, calculate_mode, report_pdf):
                                                    pressure_tap['statistics']['cp']['extreme_value']['alternative']['statistics']['mode'])
 
         ax4.text(0.1,0.9, text_msg, transform = ax4.transAxes)
+
     else:
-            print("pressure_tap['statistics']['cp']['extreme_value']['alternative'] list empty for tap " + pressure_tap['label'])
+        print("pressure_tap['statistics']['cp']['extreme_value']['alternative'] list empty for tap " + pressure_tap['label'])
 
     ax4.set_title('PDF of Alternative Extrema')
     ax4.set_xlabel('Pressure coefficient [-]')
@@ -287,6 +291,8 @@ def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
     min_val = []
     max_val = []
 
+    nr_of_bars = len(pressure_taps)
+
     for pressure_tap in pressure_taps:
 
         custom_tick_labels.append(pressure_tap['label'])
@@ -306,27 +312,27 @@ def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
 
     # subplot 1
     ax1 = fig.add_subplot(gs[0,0])
-    ax1.bar(np.arange(len(pressure_taps)), mean, barwidth, color='r')
+    ax1.bar(np.arange(nr_of_bars), mean, barwidth, color='r')
     ax1.set_title('Mean')
     ax1.set_ylabel('Pressure coefficient [-]')
-    ax1.set_xticks(np.arange(len(pressure_taps)), custom_tick_labels)
+    ax1.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
     ax1.grid(True)
 
     # subplot 2
     ax2 = fig.add_subplot(gs[1,0])
-    ax2.bar(np.arange(len(pressure_taps)), std, barwidth, color='g')
+    ax2.bar(np.arange(nr_of_bars), std, barwidth, color='g')
     ax2.set_title('Std')
     ax2.set_ylabel('Pressure coefficient [-]')
-    ax2.set_xticks(np.arange(len(pressure_taps)), custom_tick_labels)
+    ax2.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
     ax2.grid(True)
 
     # subplot 3
     ax3 = fig.add_subplot(gs[2,0])
-    ax3.bar(np.arange(len(pressure_taps)), kurt, barwidth, color='b')
+    ax3.bar(np.arange(nr_of_bars), kurt, barwidth, color='b')
     ax3.set_title('Kurtosis')
     ax3.set_ylabel('Pressure coefficient [-]')
     ax3.set_xlabel('Tap label')
-    ax3.set_xticks(np.arange(len(pressure_taps)), custom_tick_labels)
+    ax3.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
     ax3.grid(True)
 
     #fig.tight_layout()
@@ -349,27 +355,27 @@ def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
 
     # subplot 1
     ax1 = fig.add_subplot(gs[0,0])
-    ax1.bar(np.arange(len(pressure_taps)), skew, barwidth, color='r')
+    ax1.bar(np.arange(nr_of_bars), skew, barwidth, color='r')
     ax1.set_title('Skewness')
     ax1.set_ylabel('Pressure coefficient [-]')
-    ax1.set_xticks(np.arange(len(pressure_taps)), custom_tick_labels)
+    ax1.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
     ax1.grid(True)
 
     # subplot 2
     ax2 = fig.add_subplot(gs[1,0])
-    ax2.bar(np.arange(len(pressure_taps)), min_val, barwidth, color='g')
+    ax2.bar(np.arange(nr_of_bars), min_val, barwidth, color='g')
     ax2.set_title('Min')
     ax2.set_ylabel('Pressure coefficient [-]')
-    ax2.set_xticks(np.arange(len(pressure_taps)), custom_tick_labels)
+    ax2.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
     ax2.grid(True)
 
     # subplot 3
     ax3 = fig.add_subplot(gs[2,0])
-    ax3.bar(np.arange(len(pressure_taps)), max_val, barwidth, color='b')
+    ax3.bar(np.arange(nr_of_bars), max_val, barwidth, color='b')
     ax3.set_title('Max')
     ax3.set_ylabel('Pressure coefficient [-]')
     ax3.set_xlabel('Tap label')
-    ax3.set_xticks(np.arange(len(pressure_taps)), custom_tick_labels)
+    ax3.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
     ax3.grid(True)
 
     #fig.tight_layout()
@@ -403,8 +409,10 @@ def plot_pressure_taps_extreme_values(pressure_taps, calculate_mode, report_pdf)
         mean_AEV.append(pressure_tap['statistics']['cp']['extreme_value']['alternative']['statistics']['mean'])
 
         if calculate_mode:
-            mean_CEV.append(pressure_tap['statistics']['cp']['extreme_value']['classical']['statistics']['mode'])
-            mean_AEV.append(pressure_tap['statistics']['cp']['extreme_value']['alternative']['statistics']['mode'])
+            mode_CEV.append(pressure_tap['statistics']['cp']['extreme_value']['classical']['statistics']['mode'])
+            mode_AEV.append(pressure_tap['statistics']['cp']['extreme_value']['alternative']['statistics']['mode'])
+
+    nr_of_bars = len(pressure_taps)
 
     # main figure
     fig = plt.figure()
@@ -413,28 +421,33 @@ def plot_pressure_taps_extreme_values(pressure_taps, calculate_mode, report_pdf)
 
     # subplot 1
     ax1 = fig.add_subplot(gs[0,0])
+
     if calculate_mode:
-        ax1.bar(np.arange(len(pressure_taps))-barwidth/2, mean_CEV, barwidth, color='r', label = 'Mean')
-        ax1.bar(np.arange(len(pressure_taps))+barwidth/2, mode_CEV, barwidth, color='g', label = 'Mode')
+        ax1.bar(np.arange(nr_of_bars)-barwidth/2, mean_CEV, barwidth, color='r', label = 'Mean')
+        ax1.bar(np.arange(nr_of_bars)+barwidth/2, mode_CEV, barwidth, color='g', label = 'Mode')
+
     else:
-        ax1.bar(np.arange(len(pressure_taps)), mean_CEV, barwidth, color='r', label = 'Mean')
+        ax1.bar(np.arange(nr_of_bars), mean_CEV, barwidth, color='r', label = 'Mean')
 
     ax1.set_title('Classical Extrema')
     ax1.set_ylabel('Pressure coefficient [-]')
-    ax1.set_xticks(np.arange(len(pressure_taps)), custom_tick_labels)
+    ax1.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
     ax1.grid(True)
 
     # subplot 2
     ax2 = fig.add_subplot(gs[1,0])
+
     if calculate_mode:
-        ax2.bar(np.arange(len(pressure_taps))-barwidth/2, mean_AEV, barwidth, color='r', label = 'Mean')
-        ax2.bar(np.arange(len(pressure_taps))+barwidth/2, mode_AEV, barwidth, color='g', label = 'Mode')
+        ax2.bar(np.arange(nr_of_bars)-barwidth/2, mean_AEV, barwidth, color='r', label = 'Mean')
+        ax2.bar(np.arange(nr_of_bars)+barwidth/2, mode_AEV, barwidth, color='g', label = 'Mode')
+
     else:
-        ax2.bar(np.arange(len(pressure_taps)), mean_AEV, barwidth, color='r', label = 'Mean')
+        ax2.bar(np.arange(nr_of_bars), mean_AEV, barwidth, color='r', label = 'Mean')
+
     ax2.set_title('Alternative Extrema')
     ax2.set_ylabel('Pressure coefficient [-]')
     ax2.set_xlabel('Tap Label')
-    ax2.set_xticks(np.arange(len(pressure_taps)), custom_tick_labels)
+    ax2.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
     ax2.grid(True)
     ax2.legend()
 

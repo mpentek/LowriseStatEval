@@ -19,11 +19,11 @@ from argparse import ArgumentParser
 import numpy as np
 from matplotlib.backends.backend_pdf import PdfPages
 
-# import own modules from utilities
 from utilities.file_utilities import initialize_point_data
 from utilities.other_utilities import get_ramp_up_index, get_cp_series
 from utilities.statistic_utilities import get_general_statistics, get_extreme_values_statistics
 from utilities.plot_utilities import plot_ref_point_pressure_results, plot_pressure_tap_cp_results, plot_pressure_taps_general_statistics, plot_pressure_taps_extreme_values
+
 
 #----------------------------------------------------------------
 # system arguments which can be passed and default values
@@ -33,23 +33,23 @@ parser = ArgumentParser()
 parser.add_argument("--nr_of_blocks", dest="nr_of_blocks", type=int, default=6,
                     help="int: number of blocks for Block-axima")
 parser.add_argument("--calculate_mode", dest="calculate_mode", type=bool, default=False,
-                    help="bool: calculate_mode when calling statistics, can slow down computation if True")
+                    help="bool: calculate_mode when calling statistics, will slow down computation if True")
 parser.add_argument("--is_test", dest="is_test", type=bool, default=True,
-                    help="bool: is_test to evaluate on very few files for testing, can speed up computation if True")
+                    help="bool: is_test to evaluate on very few files for testing, will speed up computation if True")
 
 args = parser.parse_args()
 
 if args.calculate_mode:
-    print("## Mode calculation on, might take longer")
+    print("## Mode calculation on, will take longer")
 
 if args.is_test:
     results_overview = 'ResultsOverviewTest.json'
     report_case_ending = 'Test.pdf'
-    print("## In testing mode")
+    print("## In testing mode, will take less time")
 else:
     results_overview = 'ResultsOverview.json'
     report_case_ending = '.pdf'
-    print("## In all evaluation mode")
+    print("## In all evaluation mode, will take quite some time")
 
 #----------------------------------------------------------------
 # hardcoded parameters
@@ -65,7 +65,9 @@ with open(os_path.join(input_data_folder, results_overview)) as f:
 
 #----------------------------------------------------------------
 # evaluate results
+
 for result in results:
+
     with PdfPages(os_path.join(reports_folder, 'LowriseReport_' + result['case'] + report_case_ending)) as report_pdf:
 
         # load reference data results, update existing dictionary
@@ -79,7 +81,8 @@ for result in results:
         # evaluating statistical quantities
         result['reference_points'][0]['statistics'] = {}
         result['reference_points'][0]['statistics']['pressure'] = {}
-        result['reference_points'][0]['statistics']['pressure']['general'] = get_general_statistics(result['reference_points'][0]['series']['pressure'], args.calculate_mode)
+        result['reference_points'][0]['statistics']['pressure']['general'] = get_general_statistics(result['reference_points'][0]['series']['pressure'],
+                                                                    args.calculate_mode)
 
         # plotting reference point data
         plot_ref_point_pressure_results(result['reference_points'][0], report_pdf)
