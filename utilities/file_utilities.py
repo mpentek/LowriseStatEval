@@ -35,23 +35,24 @@ def get_tabular_data(file):
 
     # assumed column structure - time, pressure, velocity_x
     # NOTE: np.loadtxt() already casts to np.asarray() where possible
-    time_series = np.loadtxt(file, usecols = (0,))
-    pressure_series = np.loadtxt(file, usecols = (1,))
+
+    data_series = {}
+    data_series['time'] = np.loadtxt(file, usecols = (0,))
+    data_series['pressure'] = np.loadtxt(file, usecols = (1,))
 
     try:
-        velocity_x_series =  np.loadtxt(file, usecols = (2,))
+        data_series['velocity_x'] =  np.loadtxt(file, usecols = (2,))
 
     except:
-        print("No velocity_x_series in " + file)
-        velocity_x_series = np.asarray([])
+        print("## No velocity_x_series in " + file)
+        data_series['velocity_x'] = np.asarray([])
 
-    return time_series, pressure_series, velocity_x_series
+    return data_series
 
 def initialize_point_data(ref_file, result_case):
 
     point_data = {}
     point_data['position'] = get_position_from_header(ref_file, result_case)
-    point_data['series'] = {}
-    [point_data['series']['time'], point_data['series']['pressure'], point_data['series']['velocity_x']]= get_tabular_data(ref_file)
+    point_data['series'] = get_tabular_data(ref_file)
 
     return point_data

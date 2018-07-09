@@ -40,7 +40,6 @@ params = {'text.usetex': True,
           'font.family': 'lmodern',
           'text.latex.unicode': True,
           'figure.titlesize': 14,
-          'figure.titleweight': 'bold',
           'figure.figsize': (width, height),
           'figure.dpi': 300,
           'figure.constrained_layout.use' : True,
@@ -54,7 +53,7 @@ params = {'text.usetex': True,
           'axes.grid.which': 'both',
           'axes.xmargin': 0.05,
           'axes.ymargin': 0.05,
-          'lines.linewidth': 1.0,
+          'lines.linewidth': 1,
           'lines.markersize': 5,
           'xtick.labelsize': 10,
           'ytick.labelsize': 10,
@@ -203,7 +202,7 @@ def plot_pressure_tap_cp_results(pressure_tap, calculate_mode, report_pdf):
         ax4.text(0.1,0.9, text_msg, transform = ax4.transAxes)
 
     else:
-        print("pressure_tap['statistics']['cp']['extreme_value']['alternative'] list empty for tap " + pressure_tap['label'])
+        print("## pressure_tap['statistics']['cp']['extreme_value']['alternative'] list empty for tap " + pressure_tap['label'])
 
     ax4.set_title('PDF of Alternative Extrema')
     ax4.set_xlabel('Pressure coefficient [-]')

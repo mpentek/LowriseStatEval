@@ -102,11 +102,9 @@ for result in results:
                                                         result['density'])
 
             # evaluating statistical quantities (only after ramp-up time)
-            # NOTE: assumes that reference point and pressure tap have the same time series
-            # as well as time step size
             pressure_tap['statistics'] = {}
             pressure_tap['statistics']['cp'] = {}
-            pressure_tap['statistics']['cp']['general'] = get_general_statistics(pressure_tap['series']['cp'][result['reference_points'][0]['post_ramp_up_index']:],
+            pressure_tap['statistics']['cp']['general'] = get_general_statistics(pressure_tap['series']['cp'][pressure_tap['post_ramp_up_index']:],
                                                 args.calculate_mode)
             pressure_tap['statistics']['cp']['extreme_value'] = get_extreme_values_statistics(pressure_tap['series']['cp'][pressure_tap['post_ramp_up_index']:],
                                                 pressure_tap['post_ramp_up_index'],

@@ -11,6 +11,7 @@ Created on 08.07.2018
 import matplotlib.mlab as mlab
 import numpy as np #import max,min,std,mean,abs,floor,fft
 from scipy.stats import gaussian_kde, tmean, tstd, skew, kurtosis, mode
+from scipy.stats.mstats import mode as new_mode
 
 
 def get_pdf_kde(data_series):
@@ -84,12 +85,25 @@ def get_general_statistics(data_series, calculate_mode):
     results['min'] = min(data_series)
     results['max'] = max(data_series)
 
-    #statistic_results['median'] = median(time_history_data)
+    results['pdf'] = get_pdf(data_series)
+
     # NOTE: mode is time-consuming
     if calculate_mode:
-        results['mode'] = mode(data_series)[0]
+        # scipy.stats.mode seems to have a problem and deliver bad results
+        #results['mode'] = mode(data_series)[0][0]
 
-    results['pdf'] = get_pdf(data_series)
+        # alternative would be scipy.stats.mstat.mode as new_mode
+        # which seems to deliver correct results
+        # and be the most robust
+        results['mode'] = new_mode(data_series)[0][0]
+
+        # Note: as PDF is anyway calculated, taking mode from there as the max value in the PDF
+        # '''
+        # Assuming unimodal functions:
+        # A mode of a continuous probability distribution is a value at which the
+        # probability density function (pdf) attains its maximum value
+        # '''
+        # results['mode'] = results['pdf']['x'][np.argmax(results['pdf']['y'])]
 
     return results
 
@@ -163,8 +177,8 @@ def get_block_maxima(data_series, ramp_up_idx,  nr_of_blocks, calculate_mode):
             alternative_extremes_stat['mode'] = 0.0
 
         alternative_extremes_stat['pdf'] = {}
-        alternative_extremes_stat['x'] = np.asarray([])
-        alternative_extremes_stat['y'] = np.asarray([])
+        alternative_extremes_stat['pdf']['x'] = np.asarray([])
+        alternative_extremes_stat['pdf']['y'] = np.asarray([])
 
     results = {}
     results['block_start_idx'] = np.asarray(block_start_idx)
