@@ -314,6 +314,7 @@ def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
     ax1.bar(np.arange(nr_of_bars), mean, barwidth, color='r')
     ax1.set_title('Mean')
     ax1.set_ylabel(r'$C_{p}$  [-]')
+    ax1.set_ylim(-1.5,1.0)
     ax1.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
     ax1.grid(True)
 
@@ -322,6 +323,7 @@ def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
     ax2.bar(np.arange(nr_of_bars), std, barwidth, color='g')
     ax2.set_title('Std')
     ax2.set_ylabel(r'$C_{p}$  [-]')
+    ax2.set_ylim(0,0.6)
     ax2.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
     ax2.grid(True)
 
@@ -430,6 +432,7 @@ def plot_pressure_taps_extreme_values(pressure_taps, calculate_mode, report_pdf)
 
     ax1.set_title('Classical Extrema')
     ax1.set_ylabel(r'$C_{p}$  [-]')
+    ax1.set_ylim(-5,3)
     ax1.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
     ax1.grid(True)
 
@@ -445,6 +448,7 @@ def plot_pressure_taps_extreme_values(pressure_taps, calculate_mode, report_pdf)
 
     ax2.set_title('Alternative Extrema')
     ax2.set_ylabel(r'$C_{p}$  [-]')
+    ax2.set_ylim(-1.2,0.8)
     ax2.set_xlabel('Tap Label')
     ax2.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
     ax2.grid(True)
