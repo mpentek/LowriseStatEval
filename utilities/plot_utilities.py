@@ -42,7 +42,6 @@ params = {'text.usetex': True,
           'figure.titlesize': 14,
           'figure.figsize': (width, height),
           'figure.dpi': 300,
-          'figure.constrained_layout.use' : True,
           'figure.subplot.wspace'  : 0.25,
           'figure.subplot.hspace'  : 0.25,
           'axes.titlesize': 12,
@@ -68,6 +67,28 @@ params = {'text.usetex': True,
           'savefig.bbox': 'tight'
           }
 plt.rcParams.update(params)
+
+# define custom plot limits
+plot_limits = {
+    # time series = ts
+    'ts': {
+        'x': (0, 3600)
+        },
+    # general statistics = gs
+    'gs': {
+        'mean_y': (-1.5,1.0),
+        'std_y': (0,0.6),
+        'kurt_y': (0,8),
+        'skew_y': (-2.5,0.75),
+        'min_y': (-6,0),
+        'max_y': (0,3.5)
+        },
+    # extreme value statistics = evs
+    'evs' :{
+        'c_y': (-5,3),
+        'a_y': (-1.2,0.8)
+        }
+}
 
 
 def plot_pressure_tap_cp_results(pressure_tap, calculate_mode, report_pdf):
@@ -113,6 +134,8 @@ def plot_pressure_tap_cp_results(pressure_tap, calculate_mode, report_pdf):
     ax1.set_title('Time history')
     ax1.set_xlabel('Time [s]')
     ax1.set_ylabel(r'$C_{p}$  [-]')
+
+    ax1.set_xlim(plot_limits['ts']['x'])
 
     ax1.legend()
     ax1.grid(True)
@@ -264,6 +287,8 @@ def plot_ref_point_pressure_results(ref_point, report_pdf):
     ax1.set_xlabel('Time [s]')
     ax1.set_ylabel(r'Pressure [$N/{m}^2$]')
 
+    ax1.set_xlim(plot_limits['ts']['x'])
+
     ax1.legend()
     ax1.grid(True)
 
@@ -314,8 +339,9 @@ def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
     ax1.bar(np.arange(nr_of_bars), mean, barwidth, color='r')
     ax1.set_title('Mean')
     ax1.set_ylabel(r'$C_{p}$  [-]')
-    ax1.set_ylim(-1.5,1.0)
-    ax1.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
+    ax1.set_ylim(plot_limits['gs']['mean_y'])
+    ax1.set_xticks(np.arange(nr_of_bars))
+    ax1.set_xticklabels(custom_tick_labels)
     ax1.grid(True)
 
     # subplot 2
@@ -323,8 +349,9 @@ def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
     ax2.bar(np.arange(nr_of_bars), std, barwidth, color='g')
     ax2.set_title('Std')
     ax2.set_ylabel(r'$C_{p}$  [-]')
-    ax2.set_ylim(0,0.6)
-    ax2.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
+    ax2.set_ylim(plot_limits['gs']['std_y'])
+    ax2.set_xticks(np.arange(nr_of_bars))
+    ax2.set_xticklabels(custom_tick_labels)
     ax2.grid(True)
 
     # subplot 3
@@ -333,7 +360,9 @@ def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
     ax3.set_title('Kurtosis')
     ax3.set_ylabel('[-]')
     ax3.set_xlabel('Tap label')
-    ax3.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
+    ax3.set_ylim(plot_limits['gs']['kurt_y'])
+    ax3.set_xticks(np.arange(nr_of_bars))
+    ax3.set_xticklabels(custom_tick_labels)
     ax3.grid(True)
 
     #fig.tight_layout()
@@ -359,7 +388,9 @@ def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
     ax1.bar(np.arange(nr_of_bars), skew, barwidth, color='r')
     ax1.set_title('Skewness')
     ax1.set_ylabel('[-]')
-    ax1.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
+    ax1.set_ylim(plot_limits['gs']['skew_y'])
+    ax1.set_xticks(np.arange(nr_of_bars))
+    ax1.set_xticklabels(custom_tick_labels)
     ax1.grid(True)
 
     # subplot 2
@@ -367,7 +398,9 @@ def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
     ax2.bar(np.arange(nr_of_bars), min_val, barwidth, color='g')
     ax2.set_title('Min (global)')
     ax2.set_ylabel(r'$C_{p}$  [-]')
-    ax2.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
+    ax2.set_ylim(plot_limits['gs']['min_y'])
+    ax2.set_xticks(np.arange(nr_of_bars))
+    ax2.set_xticklabels(custom_tick_labels)
     ax2.grid(True)
 
     # subplot 3
@@ -375,11 +408,11 @@ def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
     ax3.bar(np.arange(nr_of_bars), max_val, barwidth, color='b')
     ax3.set_title('Max (global)')
     ax3.set_ylabel(r'$C_{p}$  [-]')
+    ax3.set_ylim(plot_limits['gs']['max_y'])
     ax3.set_xlabel('Tap label')
-    ax3.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
+    ax3.set_xticks(np.arange(nr_of_bars))
+    ax3.set_xticklabels(custom_tick_labels)
     ax3.grid(True)
-
-    #fig.tight_layout()
 
     # resizing the internal rectangle so that the sup title is not overlayed
     # workaround for overlapping elements
@@ -432,8 +465,9 @@ def plot_pressure_taps_extreme_values(pressure_taps, calculate_mode, report_pdf)
 
     ax1.set_title('Classical Extrema')
     ax1.set_ylabel(r'$C_{p}$  [-]')
-    ax1.set_ylim(-5,3)
-    ax1.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
+    ax1.set_ylim(plot_limits['evs']['c_y'])
+    ax1.set_xticks(np.arange(nr_of_bars))
+    ax1.set_xticklabels(custom_tick_labels)
     ax1.grid(True)
 
     # subplot 2
@@ -448,13 +482,12 @@ def plot_pressure_taps_extreme_values(pressure_taps, calculate_mode, report_pdf)
 
     ax2.set_title('Alternative Extrema')
     ax2.set_ylabel(r'$C_{p}$  [-]')
-    ax2.set_ylim(-1.2,0.8)
+    ax2.set_ylim(plot_limits['evs']['a_y'])
     ax2.set_xlabel('Tap Label')
-    ax2.set_xticks(np.arange(nr_of_bars), custom_tick_labels)
+    ax2.set_xticks(np.arange(nr_of_bars))
+    ax2.set_xticklabels(custom_tick_labels)
     ax2.grid(True)
     ax2.legend()
-
-    #fig.tight_layout()
 
     # resizing the internal rectangle so that the sup title is not overlayed
     # workaround for overlapping elements
