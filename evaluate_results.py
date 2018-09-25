@@ -27,6 +27,8 @@ from utilities.plot_utilities import plot_ref_point_pressure_results, plot_press
 #----------------------------------------------------------------
 # parsing of command line arguments for user specified settings
 # or default ones
+# sample usage: testing mode -> off, calculate mode -> on, cp_mode -> traditional
+# python3 evaluate_results.py -rt 'false' -cm 'true' -cpm 'trad'
 
 args = get_custom_parser_settings().parse_args()
 print("## Considered command-line arguments: ", args)
@@ -36,12 +38,18 @@ if args.calculate_mode:
 
 if args.run_test:
     results_overview = 'ResultsOverviewTest.json'
-    report_case_ending = 'Test.pdf'
+    report_ending = 'Test.pdf'
     print("## In testing mode, will take less time")
 else:
     results_overview = 'ResultsOverview.json'
-    report_case_ending = '.pdf'
+    report_ending = '.pdf'
     print("## In all evaluation mode, will take quite some time")
+
+if args.cp_mode == "trad":
+    result_cp = "_Trad"
+else:
+    result_cp = "_New"
+
 
 #----------------------------------------------------------------
 # hardcoded parameters
@@ -60,7 +68,7 @@ with open(os_path.join(input_data_folder, results_overview)) as f:
 
 for result in results:
 
-    with PdfPages(os_path.join(reports_folder, 'LowriseReport_' + result['case'] + report_case_ending)) as report_pdf:
+    with PdfPages(os_path.join(reports_folder, 'LowriseReport_' + result['case'] + result_cp + report_ending)) as report_pdf:
 
         # load reference data results, update existing dictionary
         # NOTE: for now only one reference point, later more could be added
@@ -91,7 +99,8 @@ for result in results:
 
             pressure_tap['series']['cp'] = get_cp_series(pressure_tap['series']['pressure'],
                                                         result['reference_points'][0]['series'],
-                                                        result['density'])
+                                                        result['density'],
+                                                        args.cp_mode)
 
             # evaluating statistical quantities (only after ramp-up time)
             pressure_tap['statistics'] = {}

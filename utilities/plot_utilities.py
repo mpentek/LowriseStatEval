@@ -85,8 +85,8 @@ plot_limits = {
         },
     # extreme value statistics = evs
     'evs' :{
-        'c_y': (-5,3),
-        'a_y': (-1.2,0.8)
+        'c_y': (-5,3.5),
+        'a_y': (-2.0,1.5)
         }
 }
 

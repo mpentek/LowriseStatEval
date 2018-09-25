@@ -25,9 +25,21 @@ def get_pdf_kde(data_series):
 
     data_series_max = np.max(data_series)
     data_series_min = np.min(data_series)
-    kde = gaussian_kde(data_series)
-    results['x'] = np.linspace(data_series_min, data_series_max, 1000)
-    results['y'] = kde(results['x'])
+
+    if len(data_series) > 1:
+        kde = gaussian_kde(data_series)
+        results['x'] = np.linspace(data_series_min, data_series_max, 1000)
+        results['y'] = kde(results['x'])
+    elif len(data_series) == 0:
+        print("Data series has 1 element")
+        print("Fallback solution")
+        results['x'] = [0.0]
+        results['y'] = data_series[0]
+    else:
+        print("Data series has no elements")
+        print("Fallback solution")
+        results['x'] = []
+        results['y'] = []
 
     return results
 
@@ -77,7 +89,13 @@ def get_general_statistics(data_series, calculate_mode):
     results = {}
 
     results['mean'] = tmean(data_series)
-    results['std'] = tstd(data_series)
+    try:
+        results['std'] = tstd(data_series)
+    except:
+        print("Probably not enough data in data series to calculate std, length of array: ", str(len(data_series)))
+        print("Fallback solution: returning std = 0.")
+        results['std'] = 0.0
+
     results['skewness'] = skew(data_series)
     #one can choose between Fisher's and Pearson's definition
     results['kurtosis'] = kurtosis(data_series, fisher = True)
@@ -107,7 +125,12 @@ def get_general_statistics(data_series, calculate_mode):
         A mode of a continuous probability distribution is a value at which the
         probability density function (pdf) attains its maximum value
         '''
-        results['mode'] = results['pdf']['x'][np.argmax(results['pdf']['y'])]
+        if (len(results['pdf']['y']) > 1):
+            results['mode'] = results['pdf']['x'][np.argmax(results['pdf']['y'])]
+        else:
+            print("y component of pdf has no values")
+            print("Fallback solution taking mode = 0.")
+            results['mode'] = 0.
 
     return results
 
