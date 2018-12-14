@@ -47,7 +47,6 @@ def get_custom_parser_settings():
 
 
 def get_ramp_up_index(times_series, ramp_up_time):
-
     return np.where(times_series >= ramp_up_time + ramp_up_time/5)[0][0]
 
 def get_cp_series(tap_pressure_series, reference_data_series, density, cp_mode):

@@ -30,32 +30,90 @@
                 }]
         },
         {
-            "case": "FeFlo",
+            "case": "FeFloInitial",
             "density" : 1.2,
             "ramp_up_time" : 30,
             "pressure_taps": [
-                {"file_name" : "FeFlo/s0000000001"},
-                {"file_name" : "FeFlo/s0000000002"},
-                {"file_name" : "FeFlo/s0000000003"},
-                {"file_name" : "FeFlo/s0000000004"},
-                {"file_name" : "FeFlo/s0000000005"},
-                {"file_name" : "FeFlo/s0000000006"},
-                {"file_name" : "FeFlo/s0000000007"},
-                {"file_name" : "FeFlo/s0000000008"},
-                {"file_name" : "FeFlo/s0000000009"},
-                {"file_name" : "FeFlo/s0000000010"},
-                {"file_name" : "FeFlo/s0000000011"},
-                {"file_name" : "FeFlo/s0000000012"},
-                {"file_name" : "FeFlo/s0000000013"},
-                {"file_name" : "FeFlo/s0000000014"},
-                {"file_name" : "FeFlo/s0000000015"},
-                {"file_name" : "FeFlo/s0000000016"},
-                {"file_name" : "FeFlo/s0000000017"},
-                {"file_name" : "FeFlo/s0000000018"}],
+                {"file_name" : "FeFlo/initial/s0000000001"},
+                {"file_name" : "FeFlo/initial/s0000000002"},
+                {"file_name" : "FeFlo/initial/s0000000003"},
+                {"file_name" : "FeFlo/initial/s0000000004"},
+                {"file_name" : "FeFlo/initial/s0000000005"},
+                {"file_name" : "FeFlo/initial/s0000000006"},
+                {"file_name" : "FeFlo/initial/s0000000007"},
+                {"file_name" : "FeFlo/initial/s0000000008"},
+                {"file_name" : "FeFlo/initial/s0000000009"},
+                {"file_name" : "FeFlo/initial/s0000000010"},
+                {"file_name" : "FeFlo/initial/s0000000011"},
+                {"file_name" : "FeFlo/initial/s0000000012"},
+                {"file_name" : "FeFlo/initial/s0000000013"},
+                {"file_name" : "FeFlo/initial/s0000000014"},
+                {"file_name" : "FeFlo/initial/s0000000015"},
+                {"file_name" : "FeFlo/initial/s0000000016"},
+                {"file_name" : "FeFlo/initial/s0000000017"},
+                {"file_name" : "FeFlo/initial/s0000000018"}],
                 "reference_points": [
                 {
                     "label" : "-120",
-                    "file_name": "FeFlo/s0000000083"
+                    "file_name": "FeFlo/initial/s0000000083"
+                }]
+        },
+        {
+            "case": "FeFloSlip",
+            "density" : 1.2,
+            "ramp_up_time" : 50,
+            "pressure_taps": [
+                {"file_name" : "FeFlo/slip/s0000000001"},
+                {"file_name" : "FeFlo/slip/s0000000002"},
+                {"file_name" : "FeFlo/slip/s0000000003"},
+                {"file_name" : "FeFlo/slip/s0000000004"},
+                {"file_name" : "FeFlo/slip/s0000000005"},
+                {"file_name" : "FeFlo/slip/s0000000006"},
+                {"file_name" : "FeFlo/slip/s0000000007"},
+                {"file_name" : "FeFlo/slip/s0000000008"},
+                {"file_name" : "FeFlo/slip/s0000000009"},
+                {"file_name" : "FeFlo/slip/s0000000010"},
+                {"file_name" : "FeFlo/slip/s0000000011"},
+                {"file_name" : "FeFlo/slip/s0000000012"},
+                {"file_name" : "FeFlo/slip/s0000000013"},
+                {"file_name" : "FeFlo/slip/s0000000014"},
+                {"file_name" : "FeFlo/slip/s0000000015"},
+                {"file_name" : "FeFlo/slip/s0000000016"},
+                {"file_name" : "FeFlo/slip/s0000000017"},
+                {"file_name" : "FeFlo/slip/s0000000018"}],
+                "reference_points": [
+                {
+                    "label" : "-120",
+                    "file_name": "FeFlo/slip/s0000000083"
+                }]
+        },
+        {
+            "case": "FeFloFeBC",
+            "density" : 1.2,
+            "ramp_up_time" : 30,
+            "pressure_taps": [
+                {"file_name" : "FeFlo/fe_bc/s01"},
+                {"file_name" : "FeFlo/fe_bc/s02"},
+                {"file_name" : "FeFlo/fe_bc/s03"},
+                {"file_name" : "FeFlo/fe_bc/s04"},
+                {"file_name" : "FeFlo/fe_bc/s05"},
+                {"file_name" : "FeFlo/fe_bc/s06"},
+                {"file_name" : "FeFlo/fe_bc/s07"},
+                {"file_name" : "FeFlo/fe_bc/s08"},
+                {"file_name" : "FeFlo/fe_bc/s09"},
+                {"file_name" : "FeFlo/fe_bc/s010"},
+                {"file_name" : "FeFlo/fe_bc/s011"},
+                {"file_name" : "FeFlo/fe_bc/s012"},
+                {"file_name" : "FeFlo/fe_bc/s013"},
+                {"file_name" : "FeFlo/fe_bc/s014"},
+                {"file_name" : "FeFlo/fe_bc/s015"},
+                {"file_name" : "FeFlo/fe_bc/s016"},
+                {"file_name" : "FeFlo/fe_bc/s017"},
+                {"file_name" : "FeFlo/fe_bc/s018"}],
+                "reference_points": [
+                {
+                    "label" : "-120",
+                    "file_name": "FeFlo/fe_bc/s083"
                 }]
         }
     ]
