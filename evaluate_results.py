@@ -78,6 +78,7 @@ for result in results:
         # which should be the case as we are taking both from the same simulation
         result['reference_points'][0]['post_ramp_up_index'] = get_ramp_up_index(result['reference_points'][0]['series']['time'], result['ramp_up_time'])
 
+        # PMT added for debug
         print("TIME")
         print("# idx: ",result['reference_points'][0]['post_ramp_up_index'] )
         print("# val: ",result['reference_points'][0]['series']['time'][result['reference_points'][0]['post_ramp_up_index']] )
@@ -101,10 +102,10 @@ for result in results:
             pressure_tap.update(initialize_point_data(pressure_tap_file, result['case']))
             pressure_tap['post_ramp_up_index'] = get_ramp_up_index(pressure_tap['series']['time'], result['ramp_up_time'])
 
+            # PMT added for debug
             print("CP at ", tap_counter)
             print("# idx: ",pressure_tap['post_ramp_up_index'] )
             print("# val: ",pressure_tap['series']['time'][pressure_tap['post_ramp_up_index']] )
-
 
             pressure_tap['series']['cp'] = get_cp_series(pressure_tap['series']['pressure'],
                                                         result['reference_points'][0]['series'],
