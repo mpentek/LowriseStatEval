@@ -20,8 +20,8 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 from utilities.file_utilities import initialize_point_data
 from utilities.other_utilities import get_custom_parser_settings, get_ramp_up_index, get_cp_series
-from utilities.statistic_utilities import get_general_statistics, get_extreme_values_statistics
-from utilities.plot_utilities import plot_ref_point_pressure_results, plot_pressure_tap_cp_results, plot_pressure_taps_general_statistics, plot_pressure_taps_extreme_values
+from utilities.statistic_utilities import get_general_statistics, get_extreme_values_statistics, get_velocity_spectra, get_velocity_and_pressure_autocorrelation
+from utilities.plot_utilities import plot_ref_point_pressure_results, plot_ref_point_velocity_spectra, plot_ref_point_velocity_and_pressure_autocorrelation, plot_pressure_tap_cp_results, plot_pressure_taps_general_statistics, plot_pressure_taps_extreme_values
 from utilities.export_utilities import export_summary_to_text
 
 #----------------------------------------------------------------
@@ -38,8 +38,8 @@ if args.calculate_mode:
 
 if args.run_test:
     results_overview = 'ResultsOverviewTest.json'
-    report_ending = 'Test.pdf'
-    result_summary_ending = 'Test.dat'
+    report_ending = '_Test.pdf'
+    result_summary_ending = '_Test.dat'
     print("## In testing mode, will take less time")
 else:
     results_overview = 'ResultsOverview.json'
@@ -92,8 +92,20 @@ for result in results:
         result['reference_points'][0]['statistics']['pressure']['general'] = get_general_statistics(result['reference_points'][0]['series']['pressure'],
                                                                                                     args.calculate_mode)
 
+        result['reference_points'][0]['velocity_spectra'] = get_velocity_spectra(result['reference_points'][0]['series']['time'][result['reference_points'][0]['post_ramp_up_index']:],
+                                                                                 result['reference_points'][0]['series']['velocity_x'][result['reference_points'][0]['post_ramp_up_index']:])
+
+        result['reference_points'][0]['autocorrelation'] = get_velocity_and_pressure_autocorrelation(result['reference_points'][0]['series']['time'][result['reference_points'][0]['post_ramp_up_index']:],
+                                                                                                     result['reference_points'][0]['series']['velocity_x'][result['reference_points']
+                                                                                                                                                           [0]['post_ramp_up_index']:],
+                                                                                                     result['reference_points'][0]['series']['pressure'][result['reference_points'][0]['post_ramp_up_index']:])
+
         # plotting reference point data
         plot_ref_point_pressure_results(
+            result['reference_points'][0], report_pdf)
+        plot_ref_point_velocity_spectra(
+            result['reference_points'][0], report_pdf)
+        plot_ref_point_velocity_and_pressure_autocorrelation(
             result['reference_points'][0], report_pdf)
 
         tap_counter = 0

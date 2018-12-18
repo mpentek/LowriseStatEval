@@ -4,7 +4,7 @@ Module contains plot functions
 
 Created on 08.07.2018
 
-@author: mate.pentek@tum.de, anoop.kodakkal@tum.de
+@author: mate.pentek@tum.de, anoop.kodakkal@tum.de, michael.andre@tum.de
 """
 
 
@@ -88,6 +88,16 @@ plot_limits = {
     'evs': {
         'c_y': (-5, 3.5),
         'a_y': (-2.0, 1.5)
+    },
+    # spectra
+    'spectra': {
+        'x': [1e-4, 1e2],
+        'y': [1e-7, 1e1]
+    },
+    # autocorrelation
+    'autocorr': {
+        'x': [0.0, 50.0],
+        'y': [-0.25, 1.0]
     }
 }
 
@@ -301,6 +311,107 @@ def plot_ref_point_pressure_results(ref_point, report_pdf):
     ax1.set_ylabel(r'Pressure [$N/{m}^2$]')
 
     ax1.set_xlim(plot_limits['ts']['x'])
+
+    ax1.legend()
+    ax1.grid(True)
+
+    # fig.tight_layout()
+
+    # resizing the internal rectangle so that the sup title is not overlayed
+    # workaround for overlapping elements
+    gs.tight_layout(fig, rect=cust_rect)
+
+    report_pdf.savefig()
+
+    # plot window needs to be closed to avoid error and memory problem
+    # due to too many opened
+    plt.close()
+
+
+def plot_ref_point_velocity_spectra(ref_point, report_pdf, frequency_limits=[0.5, 1.0, 2.0]):
+
+    # main figure
+    fig = plt.figure()
+    fig.suptitle('Results for reference tap - streamwise velocity spectra - "' +
+                 ref_point['label'] + '" at: ' + ', '.join(map(str, ref_point['position'])))
+    gs = gridspec.GridSpec(1, 1)
+
+    # subplot 1
+    ax1 = fig.add_subplot(gs[0, 0])
+
+    # main plot
+    ax1.loglog(ref_point['velocity_spectra']['kxz'],
+               ref_point['velocity_spectra']['Fu'], '--b', label='wfs')
+    ax1.loglog(ref_point['velocity_spectra']['kxz_fit'],
+               ref_point['velocity_spectra']['Fu_fit'], 'or', label='Fit')
+    ax1.loglog(ref_point['velocity_spectra']['kxz'],
+               ref_point['velocity_spectra']['Fu_exact'], 'k', label='Exact')
+
+    ax1.set_ylabel(r"$\mathrm{k_xF_u(k_x)}/u_{\tau}^2$")
+    ax1.set_xlabel(r"$\mathrm{fz}/U_0$")
+
+    plot_styles = [":", "-", "-.", "--"]
+    counter = 0
+    for freq_lim in frequency_limits:
+        ax1.axvline(x=freq_lim, color='r', linestyle=plot_styles[counter],
+                    label='At ' + str(freq_lim) + ' Hz')
+
+        counter += 1
+
+    ax1.set_xlim(plot_limits['spectra']['x'])
+    ax1.set_ylim(plot_limits['spectra']['y'])
+
+    ax1.legend()
+    ax1.grid(True)
+
+    # fig.tight_layout()
+
+    # resizing the internal rectangle so that the sup title is not overlayed
+    # workaround for overlapping elements
+    gs.tight_layout(fig, rect=cust_rect)
+
+    report_pdf.savefig()
+
+    # plot window needs to be closed to avoid error and memory problem
+    # due to too many opened
+    plt.close()
+
+
+def plot_ref_point_velocity_and_pressure_autocorrelation(ref_point, report_pdf, Lux="110"):
+    '''
+    Spectral length of signal specified by default, not evaluated
+    '''
+
+    # main figure
+    fig = plt.figure()
+    fig.suptitle('Results for reference tap - velocity and pressure autocorrelation - "' +
+                 ref_point['label'] + '" at: ' + ', '.join(map(str, ref_point['position'])))
+    gs = gridspec.GridSpec(1, 1)
+
+    # subplot 1
+    ax1 = fig.add_subplot(gs[0, 0])
+
+    ax1.set_ylabel(r"$\mathrm{R(t)}$")
+    ax1.set_xlabel(r"$\mathrm{t} [s]$")
+
+    # main plot
+    ax1.plot(ref_point['autocorrelation']['time'], ref_point['autocorrelation']
+             ['velocity'], 'r', label=r"$\rho_{uu}$ Lux=" + Lux, lw=1.0)
+
+    ax1.plot(ref_point['autocorrelation']['time'], ref_point['autocorrelation']
+             ['pressure'], 'b', label=r"$\rho_{pp}$ Lux=" + Lux, lw=1.0)
+
+    # begin target function
+    plot_styles = [":k", "k", "-.k", "--k"]
+    counter = 0
+    for key, value in ref_point['autocorrelation']['target'].items():
+        ax1.plot(ref_point['autocorrelation']['time'], value,
+                 plot_styles[counter], label=key, lw=1.0)
+
+        counter += 1
+
+    ax1.set_xlim(plot_limits['autocorr']['x'])
+    ax1.set_ylim(plot_limits['autocorr']['y'])
 
     ax1.legend()
     ax1.grid(True)
