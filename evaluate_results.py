@@ -22,7 +22,7 @@ from utilities.file_utilities import initialize_point_data
 from utilities.other_utilities import get_custom_parser_settings, get_ramp_up_index, get_cp_series
 from utilities.statistic_utilities import get_general_statistics, get_extreme_values_statistics
 from utilities.plot_utilities import plot_ref_point_pressure_results, plot_pressure_tap_cp_results, plot_pressure_taps_general_statistics, plot_pressure_taps_extreme_values
-
+from utilities.export_utilities import export_summary_to_text
 
 #----------------------------------------------------------------
 # parsing of command line arguments for user specified settings
@@ -39,16 +39,18 @@ if args.calculate_mode:
 if args.run_test:
     results_overview = 'ResultsOverviewTest.json'
     report_ending = 'Test.pdf'
+    result_summary_ending = 'Test.dat'
     print("## In testing mode, will take less time")
 else:
     results_overview = 'ResultsOverview.json'
     report_ending = '.pdf'
+    result_summary_ending = '.dat'
     print("## In all evaluation mode, will take quite some time")
 
-if args.cp_mode == "trad":
-    result_cp = "_Trad"
+if args.cp_mode == 'trad':
+    result_cp = '_Trad'
 else:
-    result_cp = "_New"
+    result_cp = '_New'
 
 
 #----------------------------------------------------------------
@@ -57,6 +59,7 @@ else:
 # subfolders where the input data is and where reports should be generated
 input_data_folder = 'input_data'
 reports_folder = 'reports'
+summaries_folder = 'summaries'
 
 #----------------------------------------------------------------
 # load results parameters
@@ -66,72 +69,82 @@ with open(os_path.join(input_data_folder, results_overview)) as f:
 #----------------------------------------------------------------
 # evaluate results
 
+
 for result in results:
 
     with PdfPages(os_path.join(reports_folder, 'LowriseReport_' + result['case'] + result_cp + report_ending)) as report_pdf:
 
         # load reference data results, update existing dictionary
         # NOTE: for now only one reference point, later more could be added
-        ref_point_file = os_path.join(input_data_folder, os_path.normpath(result['reference_points'][0]['file_name']))
-        result['reference_points'][0].update(initialize_point_data(ref_point_file, result['case']))
+        ref_point_file = os_path.join(input_data_folder, os_path.normpath(
+            result['reference_points'][0]['file_name']))
+        result['reference_points'][0].update(
+            initialize_point_data(ref_point_file, result['case']))
         # NOTE: assuming that reference point data and tap data have the same time step
-        # which should be the case as we are taking both from the same simulation
-        result['reference_points'][0]['post_ramp_up_index'] = get_ramp_up_index(result['reference_points'][0]['series']['time'], result['ramp_up_time'])
-
-        # PMT added for debug
-        print("TIME")
-        print("# idx: ",result['reference_points'][0]['post_ramp_up_index'] )
-        print("# val: ",result['reference_points'][0]['series']['time'][result['reference_points'][0]['post_ramp_up_index']] )
+        # which should be the case as we are taking both from the same
+        # simulation
+        result['reference_points'][0]['post_ramp_up_index'] = get_ramp_up_index(
+            result['reference_points'][0]['series']['time'], result['ramp_up_time'])
 
         # evaluating statistical quantities
         result['reference_points'][0]['statistics'] = {}
         result['reference_points'][0]['statistics']['pressure'] = {}
         result['reference_points'][0]['statistics']['pressure']['general'] = get_general_statistics(result['reference_points'][0]['series']['pressure'],
-                                                                    args.calculate_mode)
+                                                                                                    args.calculate_mode)
 
         # plotting reference point data
-        plot_ref_point_pressure_results(result['reference_points'][0], report_pdf)
+        plot_ref_point_pressure_results(
+            result['reference_points'][0], report_pdf)
 
         tap_counter = 0
         for pressure_tap in result['pressure_taps']:
-
             tap_counter += 1
             pressure_tap['label'] = str(tap_counter)
-            # load tap data results, update existing dictionary
-            pressure_tap_file = os_path.join(input_data_folder, os_path.normpath(pressure_tap['file_name']))
-            pressure_tap.update(initialize_point_data(pressure_tap_file, result['case']))
-            pressure_tap['post_ramp_up_index'] = get_ramp_up_index(pressure_tap['series']['time'], result['ramp_up_time'])
 
-            # PMT added for debug
-            print("CP at ", tap_counter)
-            print("# idx: ",pressure_tap['post_ramp_up_index'] )
-            print("# val: ",pressure_tap['series']['time'][pressure_tap['post_ramp_up_index']] )
+            # load tap data results, update existing dictionary
+            pressure_tap_file = os_path.join(
+                input_data_folder, os_path.normpath(pressure_tap['file_name']))
+            pressure_tap.update(initialize_point_data(
+                pressure_tap_file, result['case']))
+            pressure_tap['post_ramp_up_index'] = get_ramp_up_index(
+                pressure_tap['series']['time'], result['ramp_up_time'])
 
             pressure_tap['series']['cp'] = get_cp_series(pressure_tap['series']['pressure'],
-                                                        result['reference_points'][0]['series'],
-                                                        result['density'],
-                                                        args.cp_mode)
+                                                         result['reference_points'][0]['series'],
+                                                         result['density'],
+                                                         args.cp_mode)
 
             # evaluating statistical quantities (only after ramp-up time)
             pressure_tap['statistics'] = {}
             pressure_tap['statistics']['cp'] = {}
             pressure_tap['statistics']['cp']['general'] = get_general_statistics(pressure_tap['series']['cp'][pressure_tap['post_ramp_up_index']:],
-                                                args.calculate_mode)
+                                                                                 args.calculate_mode)
             pressure_tap['statistics']['cp']['extreme_value'] = get_extreme_values_statistics(pressure_tap['series']['cp'][pressure_tap['post_ramp_up_index']:],
-                                                pressure_tap['post_ramp_up_index'],
-                                                args.nr_of_blocks,
-                                                args.calculate_mode)
+                                                                                              pressure_tap['post_ramp_up_index'],
+                                                                                              args.nr_of_blocks,
+                                                                                              args.calculate_mode)
 
             # plotting tap data
-            plot_pressure_tap_cp_results(pressure_tap, args.calculate_mode, report_pdf)
+            plot_pressure_tap_cp_results(
+                pressure_tap, args.calculate_mode, report_pdf)
 
-            print('## Plot for result case ' + result['case'] + ' and tap label ' + pressure_tap['label'] + ' ready')
+            print('## Plot for result case ' +
+                  result['case'] + ' and tap label ' + pressure_tap['label'] + ' ready')
 
         # general statistics for all taps
-        plot_pressure_taps_general_statistics(result['pressure_taps'], report_pdf)
+        plot_pressure_taps_general_statistics(
+            result['pressure_taps'], report_pdf)
 
         # extreme value statistics for all taps
-        plot_pressure_taps_extreme_values(result['pressure_taps'], args.calculate_mode, report_pdf)
+        plot_pressure_taps_extreme_values(
+            result['pressure_taps'], args.calculate_mode, report_pdf)
+
+        # export main data summary to text format
+        with open(os_path.join(
+                summaries_folder, 'LowriseSummary_' + result['case'] + result_cp + result_summary_ending), 'w') as result_summary:
+            result_summary.write(export_summary_to_text(
+                result['pressure_taps'], args.calculate_mode))
+            result_summary.close()
 
         print('## All plots for result case ' + result['case'] + ' finished')
         # "clearing" dictionary value to reduce memory consumption

@@ -14,14 +14,15 @@ import matplotlib.gridspec as gridspec
 
 
 # print to check all available predefined plot styles
-#print(plt.style.available)
+# print(plt.style.available)
 # for example choose the popular ggplot
-#plt.style.use('ggplot')
+# plt.style.use('ggplot')
 
 # custom plot definitions
 # return cm from inch
 def cm2inch(value):
     return value / 2.54
+
 
 # paper size for a4 landscape
 width = cm2inch(29.7)
@@ -42,10 +43,10 @@ params = {'text.usetex': True,
           'figure.titlesize': 14,
           'figure.figsize': (width, height),
           'figure.dpi': 300,
-          'figure.subplot.wspace'  : 0.25,
-          'figure.subplot.hspace'  : 0.25,
+          'figure.subplot.wspace': 0.25,
+          'figure.subplot.hspace': 0.25,
           'axes.titlesize': 12,
-          'axes.titlepad' : 12,
+          'axes.titlepad': 12,
           'axes.labelsize': 10,
           'axes.labelpad': 10,
           'axes.grid': 'True',
@@ -73,21 +74,21 @@ plot_limits = {
     # time series = ts
     'ts': {
         'x': (0, 3600)
-        },
+    },
     # general statistics = gs
     'gs': {
-        'mean_y': (-1.5,1.0),
-        'std_y': (0,0.6),
-        'kurt_y': (0,8),
-        'skew_y': (-2.5,0.75),
-        'min_y': (-6,0),
-        'max_y': (0,3.5)
-        },
+        'mean_y': (-1.5, 1.0),
+        'std_y': (0, 0.6),
+        'kurt_y': (0, 8),
+        'skew_y': (-2.5, 0.75),
+        'min_y': (-6, 0),
+        'max_y': (0, 3.5)
+    },
     # extreme value statistics = evs
-    'evs' :{
-        'c_y': (-5,3.5),
-        'a_y': (-2.0,1.5)
-        }
+    'evs': {
+        'c_y': (-5, 3.5),
+        'a_y': (-2.0, 1.5)
+    }
 }
 
 
@@ -95,41 +96,45 @@ def plot_pressure_tap_cp_results(pressure_tap, calculate_mode, report_pdf):
 
     # main figure
     fig = plt.figure()
-    fig.suptitle('Results for tap "' + pressure_tap['label'] + '" at: ' + ', '.join(map(str, pressure_tap['position'])))
+    fig.suptitle('Results for tap "' +
+                 pressure_tap['label'] + '" at: ' + ', '.join(map(str, pressure_tap['position'])))
     gs = gridspec.GridSpec(2, 3)
 
     # subplot 1
-    ax1 = fig.add_subplot(gs[0,:])
+    ax1 = fig.add_subplot(gs[0, :])
 
     # main plot
     ax1.plot(pressure_tap['series']['time'],
-        pressure_tap['series']['cp'])
+             pressure_tap['series']['cp'])
 
     # mean
     ax1.axhline(pressure_tap['statistics']['cp']['general']['mean'],
-        color='r',
-        linestyle='-',
-        label = 'Mean')
+                color='r',
+                linestyle='-',
+                label='Mean')
 
-    ax1.text(0.95,0.5,
-        'Mean %.3f' % pressure_tap['statistics']['cp']['general']['mean'],
-        transform = ax1.transAxes)
+    ax1.text(0.95, 0.5,
+             'Mean %.3f' % pressure_tap['statistics']['cp']['general']['mean'],
+             transform=ax1.transAxes)
 
     # scatter for extreme values
     ax1.scatter(pressure_tap['series']['time'][pressure_tap['statistics']['cp']['extreme_value']['classical']['idx']],
-            pressure_tap['series']['cp'][pressure_tap['statistics']['cp']['extreme_value']['classical']['idx']],
-            marker ='s',
-            c='r',
-            label = 'Clas. Extr.')
+                pressure_tap['series']['cp'][pressure_tap['statistics']
+                                             ['cp']['extreme_value']['classical']['idx']],
+                marker='s',
+                c='r',
+                label='Clas. Extr.')
 
     ax1.scatter(pressure_tap['series']['time'][pressure_tap['statistics']['cp']['extreme_value']['alternative']['idx']],
-            pressure_tap['series']['cp'][pressure_tap['statistics']['cp']['extreme_value']['alternative']['idx']],
-            marker = 'D',
-            c='g',
-            label = 'Alter. Extr.')
+                pressure_tap['series']['cp'][pressure_tap['statistics']
+                                             ['cp']['extreme_value']['alternative']['idx']],
+                marker='D',
+                c='g',
+                label='Alter. Extr.')
 
     for idx in pressure_tap['statistics']['cp']['extreme_value']['block_start_idx']:
-        ax1.axvline(x=pressure_tap['series']['time'][idx], color='k',linestyle='--')
+        ax1.axvline(x=pressure_tap['series']['time']
+                    [idx], color='k', linestyle='--')
 
     ax1.set_title('Time history')
     ax1.set_xlabel('Time [s]')
@@ -141,29 +146,30 @@ def plot_pressure_tap_cp_results(pressure_tap, calculate_mode, report_pdf):
     ax1.grid(True)
 
     # subplot 2
-    ax2 = fig.add_subplot(gs[1,0])
+    ax2 = fig.add_subplot(gs[1, 0])
 
     # main plot
     ax2.plot(pressure_tap['statistics']['cp']['general']['pdf']['x'],
-        pressure_tap['statistics']['cp']['general']['pdf']['y'])
+             pressure_tap['statistics']['cp']['general']['pdf']['y'])
 
     # mean
     ax2.axvline(pressure_tap['statistics']['cp']['general']['mean'],
-            color='r',
-            label='Mean')
+                color='r',
+                label='Mean')
 
-    text_msg = 'Mean %.3f' % (pressure_tap['statistics']['cp']['general']['mean'])
+    text_msg = 'Mean %.3f' % (
+        pressure_tap['statistics']['cp']['general']['mean'])
 
     # mode
     if calculate_mode:
         ax2.axvline(pressure_tap['statistics']['cp']['general']['mode'],
-            color = 'g',
-            label = 'Mode')
+                    color='g',
+                    label='Mode')
 
         text_msg = 'Mean %.3f \n Mode %.3f' % (pressure_tap['statistics']['cp']['general']['mean'],
                                                pressure_tap['statistics']['cp']['general']['mode'])
 
-    ax2.text(0.1,0.9, text_msg, transform = ax2.transAxes)
+    ax2.text(0.1, 0.9, text_msg, transform=ax2.transAxes)
 
     ax2.set_title('PDF of time history')
     ax2.set_xlabel(r'$C_{p}$  [-]')
@@ -171,68 +177,71 @@ def plot_pressure_tap_cp_results(pressure_tap, calculate_mode, report_pdf):
     ax2.grid(True)
 
     # subplot 3
-    ax3 = fig.add_subplot(gs[1,1])
+    ax3 = fig.add_subplot(gs[1, 1])
 
     # main plot
     ax3.plot(pressure_tap['statistics']['cp']['extreme_value']['classical']['statistics']['pdf']['x'],
-        pressure_tap['statistics']['cp']['extreme_value']['classical']['statistics']['pdf']['y'])
+             pressure_tap['statistics']['cp']['extreme_value']['classical']['statistics']['pdf']['y'])
 
     # mean
     ax3.axvline(pressure_tap['statistics']['cp']['extreme_value']['classical']['statistics']['mean'],
-        color='r',
-        label='Mean')
+                color='r',
+                label='Mean')
 
-    text_msg = 'Mean %.3f' % (pressure_tap['statistics']['cp']['extreme_value']['classical']['statistics']['mean'])
+    text_msg = 'Mean %.3f' % (
+        pressure_tap['statistics']['cp']['extreme_value']['classical']['statistics']['mean'])
 
     if calculate_mode:
         ax3.axvline(pressure_tap['statistics']['cp']['extreme_value']['classical']['statistics']['mode'],
-            color='g',
-            label='Mode')
+                    color='g',
+                    label='Mode')
 
         text_msg = 'Mean %.3f \n Mode %.3f' % (pressure_tap['statistics']['cp']['extreme_value']['classical']['statistics']['mean'],
                                                pressure_tap['statistics']['cp']['extreme_value']['classical']['statistics']['mode'])
 
-    ax3.text(0.1,0.9, text_msg, transform = ax3.transAxes)
+    ax3.text(0.1, 0.9, text_msg, transform=ax3.transAxes)
 
     ax3.set_title('PDF of Classical Extrema')
     ax3.set_xlabel(r'$C_{p}$  [-]')
     ax3.grid(True)
 
     # subplot 4
-    ax4 = fig.add_subplot(gs[1,2])
+    ax4 = fig.add_subplot(gs[1, 2])
 
     if pressure_tap['statistics']['cp']['extreme_value']['alternative']:
         # list not empty
 
         # main plot
         ax4.plot(pressure_tap['statistics']['cp']['extreme_value']['alternative']['statistics']['pdf']['x'],
-            pressure_tap['statistics']['cp']['extreme_value']['alternative']['statistics']['pdf']['y'])
+                 pressure_tap['statistics']['cp']['extreme_value']['alternative']['statistics']['pdf']['y'])
 
         ax4.axvline(pressure_tap['statistics']['cp']['extreme_value']['alternative']['statistics']['mean'],
-            color='r',
-            label = 'Mean')
+                    color='r',
+                    label='Mean')
 
-        text_msg = 'Mean %.3f' % (pressure_tap['statistics']['cp']['extreme_value']['alternative']['statistics']['mean'])
+        text_msg = 'Mean %.3f' % (
+            pressure_tap['statistics']['cp']['extreme_value']['alternative']['statistics']['mean'])
 
         if calculate_mode:
             ax4.axvline(pressure_tap['statistics']['cp']['extreme_value']['alternative']['statistics']['mode'],
-                color='g',
-                label = 'Mode')
+                        color='g',
+                        label='Mode')
 
             text_msg = 'Mean %.3f \n Mode %.3f' % (pressure_tap['statistics']['cp']['extreme_value']['alternative']['statistics']['mean'],
                                                    pressure_tap['statistics']['cp']['extreme_value']['alternative']['statistics']['mode'])
 
-        ax4.text(0.1,0.9, text_msg, transform = ax4.transAxes)
+        ax4.text(0.1, 0.9, text_msg, transform=ax4.transAxes)
 
     else:
-        print("## pressure_tap['statistics']['cp']['extreme_value']['alternative'] list empty for tap " + pressure_tap['label'])
+        print(
+            "## pressure_tap['statistics']['cp']['extreme_value']['alternative'] list empty for tap " + pressure_tap['label'])
 
     ax4.set_title('PDF of Alternative Extrema')
     ax4.set_xlabel(r'$C_{p}$  [-]')
     ax4.grid(True)
-    ax4.legend(bbox_to_anchor=(0.9, 0.9),bbox_transform=ax4.transAxes)
+    ax4.legend(bbox_to_anchor=(0.9, 0.9), bbox_transform=ax4.transAxes)
 
-    #fig.tight_layout()
+    # fig.tight_layout()
 
     # resizing the internal rectangle so that the sup title is not overlayed
     # workaround for overlapping elements
@@ -244,44 +253,48 @@ def plot_pressure_tap_cp_results(pressure_tap, calculate_mode, report_pdf):
     # due to too many opened
     plt.close()
 
+
 def plot_ref_point_pressure_results(ref_point, report_pdf):
 
     # main figure
     fig = plt.figure()
-    fig.suptitle('Results for reference tap "' + ref_point['label'] + '" at: ' + ', '.join(map(str, ref_point['position'])))
+    fig.suptitle('Results for reference tap "' +
+                 ref_point['label'] + '" at: ' + ', '.join(map(str, ref_point['position'])))
     gs = gridspec.GridSpec(1, 1)
 
     # subplot 1
-    ax1 = fig.add_subplot(gs[0,0])
+    ax1 = fig.add_subplot(gs[0, 0])
 
     # main plot
     ax1.plot(ref_point['series']['time'],
-        ref_point['series']['pressure'])
+             ref_point['series']['pressure'])
 
     # mean
     ax1.axhline(ref_point['statistics']['pressure']['general']['mean'],
-        color='r',
-        label = 'mean')
+                color='r',
+                label='mean')
 
     # mean + std
     ax1.axhline(ref_point['statistics']['pressure']['general']['mean'] + ref_point['statistics']['pressure']['general']['std'],
-        color='r',
-        linestyle='--',
-        label = 'mean+std')
+                color='r',
+                linestyle='--',
+                label='mean+std')
 
     # mean - std
     ax1.axhline(ref_point['statistics']['pressure']['general']['mean'] - ref_point['statistics']['pressure']['general']['std'],
-        color='r',
-        linestyle='--',
-        label = 'mean-std')
+                color='r',
+                linestyle='--',
+                label='mean-std')
 
-    ax1.text(0.95,0.5,
-        'Mean %.3f\n Mean+std %.3f\n Mean-std %.3f' % (ref_point['statistics']['pressure']['general']['mean'],
-        ref_point['statistics']['pressure']['general']['mean'] + ref_point['statistics']['pressure']['general']['std'],
-        ref_point['statistics']['pressure']['general']['mean'] - ref_point['statistics']['pressure']['general']['std']),
-        transform = ax1.transAxes)
+    ax1.text(0.95, 0.5,
+             'Mean %.3f\n Mean+std %.3f\n Mean-std %.3f' % (ref_point['statistics']['pressure']['general']['mean'],
+                                                            ref_point['statistics']['pressure']['general']['mean'] +
+                                                            ref_point['statistics']['pressure']['general']['std'],
+                                                            ref_point['statistics']['pressure']['general']['mean'] - ref_point['statistics']['pressure']['general']['std']),
+             transform=ax1.transAxes)
 
-    ax1.axvline(x=ref_point['series']['time'][ref_point['post_ramp_up_index']], color='k',linestyle='--')
+    ax1.axvline(x=ref_point['series']['time']
+                [ref_point['post_ramp_up_index']], color='k', linestyle='--')
 
     ax1.set_title('Time history')
     ax1.set_xlabel('Time [s]')
@@ -292,7 +305,7 @@ def plot_ref_point_pressure_results(ref_point, report_pdf):
     ax1.legend()
     ax1.grid(True)
 
-    #fig.tight_layout()
+    # fig.tight_layout()
 
     # resizing the internal rectangle so that the sup title is not overlayed
     # workaround for overlapping elements
@@ -303,6 +316,7 @@ def plot_ref_point_pressure_results(ref_point, report_pdf):
     # plot window needs to be closed to avoid error and memory problem
     # due to too many opened
     plt.close()
+
 
 def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
     barwidth = 0.33
@@ -335,7 +349,7 @@ def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
     gs = gridspec.GridSpec(3, 1)
 
     # subplot 1
-    ax1 = fig.add_subplot(gs[0,0])
+    ax1 = fig.add_subplot(gs[0, 0])
     ax1.bar(np.arange(nr_of_bars), mean, barwidth, color='r')
     ax1.set_title('Mean')
     ax1.set_ylabel(r'$C_{p}$  [-]')
@@ -345,7 +359,7 @@ def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
     ax1.grid(True)
 
     # subplot 2
-    ax2 = fig.add_subplot(gs[1,0])
+    ax2 = fig.add_subplot(gs[1, 0])
     ax2.bar(np.arange(nr_of_bars), std, barwidth, color='g')
     ax2.set_title('Std')
     ax2.set_ylabel(r'$C_{p}$  [-]')
@@ -355,7 +369,7 @@ def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
     ax2.grid(True)
 
     # subplot 3
-    ax3 = fig.add_subplot(gs[2,0])
+    ax3 = fig.add_subplot(gs[2, 0])
     ax3.bar(np.arange(nr_of_bars), kurt, barwidth, color='b')
     ax3.set_title('Kurtosis')
     ax3.set_ylabel('[-]')
@@ -365,7 +379,7 @@ def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
     ax3.set_xticklabels(custom_tick_labels)
     ax3.grid(True)
 
-    #fig.tight_layout()
+    # fig.tight_layout()
 
     # resizing the internal rectangle so that the sup title is not overlayed
     # workaround for overlapping elements
@@ -384,7 +398,7 @@ def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
     gs = gridspec.GridSpec(3, 1)
 
     # subplot 1
-    ax1 = fig.add_subplot(gs[0,0])
+    ax1 = fig.add_subplot(gs[0, 0])
     ax1.bar(np.arange(nr_of_bars), skew, barwidth, color='r')
     ax1.set_title('Skewness')
     ax1.set_ylabel('[-]')
@@ -394,7 +408,7 @@ def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
     ax1.grid(True)
 
     # subplot 2
-    ax2 = fig.add_subplot(gs[1,0])
+    ax2 = fig.add_subplot(gs[1, 0])
     ax2.bar(np.arange(nr_of_bars), min_val, barwidth, color='g')
     ax2.set_title('Min (global)')
     ax2.set_ylabel(r'$C_{p}$  [-]')
@@ -404,7 +418,7 @@ def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
     ax2.grid(True)
 
     # subplot 3
-    ax3 = fig.add_subplot(gs[2,0])
+    ax3 = fig.add_subplot(gs[2, 0])
     ax3.bar(np.arange(nr_of_bars), max_val, barwidth, color='b')
     ax3.set_title('Max (global)')
     ax3.set_ylabel(r'$C_{p}$  [-]')
@@ -424,6 +438,7 @@ def plot_pressure_taps_general_statistics(pressure_taps, report_pdf):
     # due to too many opened
     plt.close()
 
+
 def plot_pressure_taps_extreme_values(pressure_taps, calculate_mode, report_pdf):
     barwidth = 0.33
 
@@ -439,12 +454,16 @@ def plot_pressure_taps_extreme_values(pressure_taps, calculate_mode, report_pdf)
 
         custom_tick_labels.append(pressure_tap['label'])
 
-        mean_CEV.append(pressure_tap['statistics']['cp']['extreme_value']['classical']['statistics']['mean'])
-        mean_AEV.append(pressure_tap['statistics']['cp']['extreme_value']['alternative']['statistics']['mean'])
+        mean_CEV.append(pressure_tap['statistics']['cp']
+                        ['extreme_value']['classical']['statistics']['mean'])
+        mean_AEV.append(pressure_tap['statistics']['cp']
+                        ['extreme_value']['alternative']['statistics']['mean'])
 
         if calculate_mode:
-            mode_CEV.append(pressure_tap['statistics']['cp']['extreme_value']['classical']['statistics']['mode'])
-            mode_AEV.append(pressure_tap['statistics']['cp']['extreme_value']['alternative']['statistics']['mode'])
+            mode_CEV.append(
+                pressure_tap['statistics']['cp']['extreme_value']['classical']['statistics']['mode'])
+            mode_AEV.append(
+                pressure_tap['statistics']['cp']['extreme_value']['alternative']['statistics']['mode'])
 
     nr_of_bars = len(pressure_taps)
 
@@ -454,14 +473,17 @@ def plot_pressure_taps_extreme_values(pressure_taps, calculate_mode, report_pdf)
     gs = gridspec.GridSpec(2, 1)
 
     # subplot 1
-    ax1 = fig.add_subplot(gs[0,0])
+    ax1 = fig.add_subplot(gs[0, 0])
 
     if calculate_mode:
-        ax1.bar(np.arange(nr_of_bars)-barwidth/2, mean_CEV, barwidth, color='r', label = 'Mean')
-        ax1.bar(np.arange(nr_of_bars)+barwidth/2, mode_CEV, barwidth, color='g', label = 'Mode')
+        ax1.bar(np.arange(nr_of_bars) - barwidth / 2,
+                mean_CEV, barwidth, color='r', label='Mean')
+        ax1.bar(np.arange(nr_of_bars) + barwidth / 2,
+                mode_CEV, barwidth, color='g', label='Mode')
 
     else:
-        ax1.bar(np.arange(nr_of_bars), mean_CEV, barwidth, color='r', label = 'Mean')
+        ax1.bar(np.arange(nr_of_bars), mean_CEV,
+                barwidth, color='r', label='Mean')
 
     ax1.set_title('Classical Extrema')
     ax1.set_ylabel(r'$C_{p}$  [-]')
@@ -471,14 +493,17 @@ def plot_pressure_taps_extreme_values(pressure_taps, calculate_mode, report_pdf)
     ax1.grid(True)
 
     # subplot 2
-    ax2 = fig.add_subplot(gs[1,0])
+    ax2 = fig.add_subplot(gs[1, 0])
 
     if calculate_mode:
-        ax2.bar(np.arange(nr_of_bars)-barwidth/2, mean_AEV, barwidth, color='r', label = 'Mean')
-        ax2.bar(np.arange(nr_of_bars)+barwidth/2, mode_AEV, barwidth, color='g', label = 'Mode')
+        ax2.bar(np.arange(nr_of_bars) - barwidth / 2,
+                mean_AEV, barwidth, color='r', label='Mean')
+        ax2.bar(np.arange(nr_of_bars) + barwidth / 2,
+                mode_AEV, barwidth, color='g', label='Mode')
 
     else:
-        ax2.bar(np.arange(nr_of_bars), mean_AEV, barwidth, color='r', label = 'Mean')
+        ax2.bar(np.arange(nr_of_bars), mean_AEV,
+                barwidth, color='r', label='Mean')
 
     ax2.set_title('Alternative Extrema')
     ax2.set_ylabel(r'$C_{p}$  [-]')
